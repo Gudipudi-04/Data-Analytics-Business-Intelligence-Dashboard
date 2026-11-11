@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>InsightBoard - Indian BI Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0f172a;color:#fff}
+a{color:#22d3ee}
+.wrap{max-width:1000px;margin:0 auto;padding:18px}
+.card{background:#1e293b;border-radius:14px;padding:18px}
+input,select{width:100%;padding:12px;margin:7px 0 12px;border-radius:8px;border:none;background:#0f172a;color:#fff}
+button{padding:12px 16px;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
+.btn{ background:#06b6d4;color:#fff;width:100%}
+.btn2{background:#22c55e;color:#fff}
+.btn3{background:#334155;color:#fff}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{flex:1;background:#334155;color:#fff}
+.tabs button.on{background:#06b6d4}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.kpi{background:#1e293b;padding:16px;border-radius:12px}
+table{width:100%;border-collapse:collapse;background:#1e293b;border-radius:12px;overflow:hidden;margin-top:12px}
+th,td{padding:11px;text-align:left;font-size:14px;border-bottom:1px solid #334155}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:700px){.kpis{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+.small{color:#94a3b8;font-size:13px}
+.err{color:#f87171;font-size:13px;min-height:18px}
+.ok{color:#4ade80;font-size:13px;min-height:18px}
+.bar{height:12px;background:#334155;border-radius:8px;overflow:hidden;margin:6px 0}
+.bar i{display:block;height:100%;background:#06b6d4}
+</style></head>
+<body>
+<div class="wrap" id="authBox">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" id="authGrid">
+<div class="card"><h1 style="color:#22d3ee">InsightBoard 🇮🇳</h1><p class="small" style="margin:10px 0">Data Analytics & Business Intelligence Dashboard - Made for Indian Businesses</p>
+<p>✅ Custom Dashboards<br>✅ KPI Monitoring<br>✅ Data Add / Edit<br>✅ Exportable Reports</p>
+<div style="background:#0f172a;padding:12px;border-radius:10px;margin-top:14px;font-size:13px">Demo Login<br><b>admin@insightboard.com / admin123</b><br>or Register chesi nee account tho login avvu</div></div>
+<div class="card">
+<div class="tabs"><button id="tabLogin" class="on" onclick="showTab('login')">Login</button><button id="tabReg" onclick="showTab('reg')">Register</button></div>
+<div id="loginForm">
+<h2>Welcome Back 👋</h2>
+<label>Full Name / Email</label><input id="lEmail" placeholder="admin@insightboard.com" value="admin@insightboard.com">
+<label>Password</label><input id="lPass" type="password" placeholder="Password" value="admin123">
+<p class="err" id="lErr"></p><button class="btn" onclick="doLogin()">Login → Dashboard</button>
+<button class="btn btn2" style="margin-top:10px" onclick="demoLogin()">Login as Demo User</button>
+</div>
+<div id="regForm" style="display:none">
+<h2>Create Account 📝</h2>
+<label>Full Name (Indian Name)</label><input id="rName" placeholder="Ex: Lakshmi Prasanna Gudipudi">
+<label>Email</label><input id="rEmail" placeholder="you@gmail.com">
+<label>City</label><select id="rCity"><option>Visakhapatnam</option><option>Hyderabad</option><option>Vijayawada</option><option>Chennai</option><option>Bengaluru</option><option>Mumbai</option><option>Delhi</option><option>Pune</option></select>
+<label>Password</label><input id="rPass" type="password" placeholder="Min 4 chars">
+<p class="ok" id="rOk"></p><p class="err" id="rErr"></p><button class="btn" onclick="doRegister()">Register & Login</button>
+</div>
+</div></div></div>
+
+<div class="wrap" id="dashBox" style="display:none">
+<div class="top"><div><h2 id="welcome">Welcome 👋</h2><p class="small" id="welcomeSub"></p></div>
+<div style="display:flex;gap:8px"><button class="btn3" onclick="exportCSV()">⬇ Export CSV</button><button style="background:#ef4444;color:#fff" onclick="logout()">Logout</button></div></div>
+
+<div class="kpis">
+<div class="kpi"><p>Total Revenue</p><h2 id="kRev">₹0</h2><span style="color:#4ade80">+18.2% vs last month</span></div>
+<div class="kpi"><p>Total Customers</p><h2 id="kCust">0</h2><span style="color:#4ade80">Indian Customers</span></div>
+<div class="kpi"><p>Total Sales</p><h2 id="kSales">0</h2><span>Orders</span></div>
+<div class="kpi"><p>Avg Order Value</p><h2 id="kAvg">₹0</h2><span>Avg per order</span></div>
+</div>
+
+<div class="grid2">
+<div class="card"><h3>➕ Add New Data - Nee Data Add Chey</h3>
+<p class="small">Register ayyaka nuvvu kuda data add cheyochu. Ikkada add cheste table lo, KPIs lo update avthadi.</p>
+<label>Customer Name</label><input id="nName" placeholder="Ex: Priya Sharma">
+<label>City</label><select id="nCity"><option>Visakhapatnam</option><option>Hyderabad</option><option>Vijayawada</option><option>Chennai</option><option>Bengaluru</option><option>Mumbai</option><option>Delhi</option><option>Pune</option><option>Kolkata</option></select>
+<label>Product</label><select id="nProd"><option>Basmati Rice 5kg</option><option>Masala Chai Kit</option><option>Handloom Saree</option><option>Brass Diya Set</option><option>Spices Combo</option><option>Smart Watch</option><option>Running Shoes</option><option>Wireless Headphones</option></select>
+<label>Amount (₹)</label><input id="nAmt" type="number" placeholder="Ex: 2499">
+<button class="btn btn2" onclick="addData()">+ Add Data</button>
+<p class="ok" id="addOk"></p>
+</div>
+<div class="card"><h3>📊 Sales by City</h3>
+<div id="cityBars"></div>
+<h3 style="margin-top:14px">🔍 Search</h3><input id="search" placeholder="Name / City / Product search chey..." oninput="render()">
+</div>
+</div>
+
+<table><thead><tr><th>Customer</th><th>City</th><th>Product</th><th>Amount</th><th>Action</th></tr></thead><tbody id="tbody"></tbody></table>
+<p class="small" style="margin-top:10px">Data browser lo save avthadi (localStorage). Refresh chesina povadu. Delete cheyochu.</p>
+</div>
+
+<script>
+let defaultData=[
+{name:"Priya Sharma",city:"Mumbai",product:"Handloom Saree",amt:3499},
+{name:"Rohan Patel",city:"Hyderabad",product:"Basmati Rice 5kg",amt:1299},
+{name:"Ananya Iyer",city:"Chennai",product:"Masala Chai Kit",amt:899},
+{name:"Vikram Reddy",city:"Visakhapatnam",product:"Wireless Headphones",amt:4999},
+{name:"Sneha Kulkarni",city:"Pune",product:"Spices Combo",amt:1599},
+{name:"Arjun Mehta",city:"Delhi",product:"Smart Watch",amt:6999},
+{name:"Divya Nair",city:"Bengaluru",product:"Brass Diya Set",amt:1199},
+{name:"Karthik Rao",city:"Vijayawada",product:"Running Shoes",amt:2799},
+{name:"Meera Desai",city:"Hyderabad",product:"Handloom Saree",amt:4299},
+{name:"Aditya Verma",city:"Visakhapatnam",product:"Masala Chai Kit",amt:999},
+];
+let data=JSON.parse(localStorage.getItem('biData')||'null')||defaultData;
+let currentUser=JSON.parse(localStorage.getItem('biUser')||'null');
+if(currentUser){ showDash(); }
+function showTab(t){
+ document.getElementById('loginForm').style.display=t=='login'?'block':'none';
+ document.getElementById('regForm').style.display=t=='reg'?'block':'none';
+ document.getElementById('tabLogin').className=t=='login'?'on':'';
+ document.getElementById('tabReg').className=t=='reg'?'on':'';
+}
+function doLogin(){
+ let e=document.getElementById('lEmail').value.trim(), p=document.getElementById('lPass').value;
+ let users=JSON.parse(localStorage.getItem('biUsers')||'[]');
+ let found=users.find(u=>u.email==e && u.pass==p);
+ if((e=='admin@insightboard.com'&&p=='admin123')||(e=='demo@demo.com'&&p=='demo123')||found){
+   let name=found?found.name:(e=='admin@insightboard.com'?'Lakshmi Prasanna Gudipudi':'Demo User');
+   currentUser={name:name,email:e,city:found?found.city:'Visakhapatnam'};
+   localStorage.setItem('biUser',JSON.stringify(currentUser)); showDash();
+ } else document.getElementById('lErr').innerText='Wrong login! Demo use chey: admin@insightboard.com / admin123 or Register avvu';
+}
+function demoLogin(){ document.getElementById('lEmail').value='admin@insightboard.com'; document.getElementById('lPass').value='admin123'; doLogin(); }
+function doRegister(){
+ let n=document.getElementById('rName').value.trim(), e=document.getElementById('rEmail').value.trim(), c=document.getElementById('rCity').value, p=document.getElementById('rPass').value;
+ if(!n||!e||p.length<4){ document.getElementById('rErr').innerText='Name, Email, Password (min 4) fill chey'; return; }
+ let users=JSON.parse(localStorage.getItem('biUsers')||'[]'); users.push({name:n,email:e,city:c,pass:p}); localStorage.setItem('biUsers',JSON.stringify(users));
+ currentUser={name:n,email:e,city:c}; localStorage.setItem('biUser',JSON.stringify(currentUser));
+ document.getElementById('rOk').innerText='Register ayyindi! Dashboard open avthundi...'; setTimeout(showDash,600);
+}
+function showDash(){
+ document.getElementById('authBox').style.display='none'; document.getElementById('dashBox').style.display='block';
+ document.getElementById('welcome').innerText='Welcome, '+currentUser.name+' 👋';
+ document.getElementById('welcomeSub').innerText=currentUser.email+' • '+currentUser.city+' • Indian BI Dashboard';
+ render();
+}
+function logout(){ localStorage.removeItem('biUser'); location.reload(); }
+function addData(){
+ let n=document.getElementById('nName').value.trim(), c=document.getElementById('nCity').value, pr=document.getElementById('nProd').value, a=parseInt(document.getElementById('nAmt').value);
+ if(!n||!a){ document.getElementById('addOk').innerText=''; alert('Name & Amount fill chey'); return; }
+ data.unshift({name:n,city:c,product:pr,amt:a}); localStorage.setItem('biData',JSON.stringify(data));
+ document.getElementById('addOk').innerText='✅ Added! '+n+' - ₹'+a; document.getElementById('nName').value=''; document.getElementById('nAmt').value=''; render();
+}
+function delData(i){ if(confirm('Delete cheyala?')){ data.splice(i,1); localStorage.setItem('biData',JSON.stringify(data)); render(); } }
+function render(){
+ let q=(document.getElementById('search').value||'').toLowerCase();
+ let filtered=data.filter((d,i)=> (d.name+' '+d.city+' '+d.product).toLowerCase().includes(q));
+ let total=data.reduce((s,d)=>s+d.amt,0);
+ document.getElementById('kRev').innerText='₹'+total.toLocaleString('en-IN');
+ document.getElementById('kCust').innerText=new Set(data.map(d=>d.name)).size;
+ document.getElementById('kSales').innerText=data.length;
+ document.getElementById('kAvg').innerText='₹'+Math.round(total/Math.max(1,data.length)).toLocaleString('en-IN');
+ document.getElementById('tbody').innerHTML=filtered.map((d)=>{
+   let idx=data.indexOf(d); return '<tr><td>'+d.name+'</td><td>'+d.city+'</td><td>'+d.product+'</td><td>₹'+d.amt.toLocaleString('en-IN')+'</td><td><button style="background:#ef4444;color:#fff;padding:6px 10px" onclick="delData('+idx+')">Delete</button></td></tr>';
+ }).join('') || '<tr><td colspan=5>No data</td></tr>';
+ let cities={}; data.forEach(d=>cities[d.city]=(cities[d.city]||0)+d.amt);
+ let max=Math.max(...Object.values(cities),1);
+ document.getElementById('cityBars').innerHTML=Object.entries(cities).sort((a,b)=>b[1]-a[1]).map(([c,v])=>'<p>'+c+' - ₹'+v.toLocaleString('en-IN')+'</p><div class="bar"><i style="width:'+Math.round(v/max*100)+'%"></i></div>').join('');
+}
+function exportCSV(){
+ let csv='Customer,City,Product,Amount\n'+data.map(d=>d.name+','+d.city+','+d.product+','+d.amt).join('\n');
+ let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='indian-bi-data.csv'; a.click();
+}
+</script></body></html>
